@@ -13,18 +13,26 @@ const chunk = require(`lodash/chunk`)
  */
 exports.createPages = async gatsbyUtilities => {
   // Query our posts from the GraphQL server
-  const posts = await getPosts(gatsbyUtilities)
+  const data = await getData(gatsbyUtilities)
 
-  // If there are no posts in WordPress, don't do anything
-  if (!posts.length) {
-    return
+  const pages = data.allWpPage.edges
+  const posts = data.allWpPost.edges
+
+
+  // await createLandingPage({pages, posts, gatsbyUtilities})
+
+  if (pages.length > 0) {
+    await createIndividualPages({ pages, gatsbyUtilities })
   }
 
-  // If there are posts, create pages for them
-  await createIndividualBlogPostPages({ posts, gatsbyUtilities })
+  // If there are posts in WordPress
+  if (posts.length > 0) {
+    // If there are posts, create pages for them
+    await createIndividualBlogPostPages({ posts, gatsbyUtilities })
 
-  // And a paginated archive
-  await createBlogPostArchive({ posts, gatsbyUtilities })
+    // And a paginated archive
+    await createBlogPostArchive({ posts, gatsbyUtilities })
+  }
 }
 
 /**
@@ -88,7 +96,7 @@ async function createBlogPostArchive({ posts, gatsbyUtilities }) {
           // we want the first page to be "/" and any additional pages
           // to be numbered.
           // "/blog/2" for example
-          return page === 1 ? `/` : `/blog/${page}`
+          return page === 1 ? `/blog` : `/blog/${page}`
         }
 
         return null
@@ -123,15 +131,25 @@ async function createBlogPostArchive({ posts, gatsbyUtilities }) {
 
 /**
  * This function queries Gatsby's GraphQL server and asks for
- * All WordPress blog posts. If there are any GraphQL error it throws an error
+ * All WordPress blog posts and pages. If there are any GraphQL error it throws an error
  * Otherwise it will return the posts 🙌
  *
  * We're passing in the utilities we got from createPages.
  * So see https://www.gatsbyjs.com/docs/node-apis/#createPages for more info!
  */
-async function getPosts({ graphql, reporter }) {
+async function getData({ graphql, reporter }) {
   const graphqlResult = await graphql(/* GraphQL */ `
     query WpPosts {
+      allWpPage(sort: { fields: [date], order: DESC }) {
+        edges {
+          # note: this is a GraphQL alias. It renames "node" to "page" for this query
+          # We're doing this because this "node" is a page! It makes our code more readable further down the line.
+          page: node {
+            id
+            uri
+          }
+        }
+      }
       # Query all WordPress blog posts sorted by date
       allWpPost(sort: { fields: [date], order: DESC }) {
         edges {
@@ -162,5 +180,45 @@ async function getPosts({ graphql, reporter }) {
     return
   }
 
-  return graphqlResult.data.allWpPost.edges
+  return graphqlResult.data
 }
+
+
+
+const createLandingPage = async ({ gatsbyUtilities }) =>
+  // createPage is an action passed to createPages
+  // See https://www.gatsbyjs.com/docs/actions#createPage for more info
+  gatsbyUtilities.actions.createPage({
+    // Use the WordPress uri as the Gatsby page path
+    // This is a good idea so that internal links and menus work 👍
+    path: "/",
+
+    // use the blog post template as the page component
+    component: path.resolve(`./src/pages/index.js`),
+  })
+
+
+const createIndividualPages = async ({ pages, gatsbyUtilities }) =>
+  Promise.all(
+    pages.map(({ page }) =>
+      // createPage is an action passed to createPages
+      // See https://www.gatsbyjs.com/docs/actions#createPage for more info
+      gatsbyUtilities.actions.createPage({
+        // Use the WordPress uri as the Gatsby page path
+        // This is a good idea so that internal links and menus work 👍
+        path: page.uri,
+
+        // use the pagetemplate as the page component
+        component: path.resolve(`./src/templates/page.js`),
+
+        // `context` is available in the template as a prop and
+        // as a variable in GraphQL.
+        context: {
+          // we need to add the post id here
+          // so our page template knows which page
+          // the current page is (when you open it in a browser)
+          id: page.id,
+        },
+      })
+    )
+  )

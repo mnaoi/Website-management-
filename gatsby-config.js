@@ -6,7 +6,16 @@
  *
  */
 
+ console.log("process.env.NODE_ENV",process.env.NODE_ENV)
+
+ require("dotenv").config({
+   path: `.env.${process.env.NODE_ENV}`,
+ })
+ 
+ console.log("process.env.WPGRAPHQL_URL",process.env.WPGRAPHQL_URL)
+
 module.exports = {
+  pathPrefix: "/Website-management-",
   /**
    * Adding plugins to this array adds them to your Gatsby site.
    *
@@ -28,7 +37,7 @@ module.exports = {
         // the only required plugin option for WordPress is the GraphQL url.
         url:
           process.env.WPGRAPHQL_URL ||
-          `https://wpgatsbydemo.wpengine.com/graphql`,
+          `http://localhost:8888/wordpress/graphql`, //`https://wpgatsbydemo.wpengine.com/graphql`,
       },
     },
 
