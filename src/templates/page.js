@@ -16,7 +16,8 @@ import Layout from "../components/layout"
 import Seo from "../components/seo"
 import Sidebar from "../components/Sidebar/Sidebar"
 
-const PageTemplate = ({data}) => {
+const PageTemplate = (props) => {
+  const data = props.data
   const {previous, post, next} = data
 
   const featuredImage = {
@@ -33,11 +34,11 @@ const PageTemplate = ({data}) => {
       <div className="featured-image">
         {/* if we have a featured image for this post let's display it */}
         {featuredImage?.data && (
-            <GatsbyImage
-              image={featuredImage.data}
-              alt={featuredImage.alt || "Featured Image"}
-            />
-          )}
+          <GatsbyImage
+            image={featuredImage.data}
+            alt={featuredImage.alt || "Featured Image"}
+          />
+        )}
       </div>
 
       <div className="page-body">
@@ -110,6 +111,7 @@ export const pageQuery = graphql`
     allWpPage {
       nodes {
         title
+        uri
       }
     }
     post: wpPage(id: { eq: $id }) {
