@@ -43,9 +43,9 @@ const PageTemplate = (props) => {
 
       <div className="page-body">
         <div className="page-content">
-          <header>
+          {/* <header>
             <h1>{parse(post.title)}</h1>
-          </header>
+          </header> */}
 
           {!!post.content && (
             <section>{parse(post.content)}</section>

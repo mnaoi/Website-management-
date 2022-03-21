@@ -47,6 +47,8 @@ export default function Sidebar(props:Props) {
         src="../../images/mnaoi.jpeg"
         alt="Profile picture"
       />
+
+      <hr/>
       <div className='items'>
         {pages.map((p,i) =>
           <p key={i} className={`item ${location.pathname==p.uri && "active"}`}><Link to={p.uri}>{p.title}</Link></p>
