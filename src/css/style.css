@@ -283,15 +283,37 @@ a:focus {
 
 .sidebar {
   width: var(--sidebar-width);
-  margin-top: -3em;
+  position: fixed;
+  left: calc(-1 * var(--sidebar-width));
+  top: 0;
+  bottom: 0;
+  background-color: #ddd;
+  transition: 0.5s;
 }
-.sidebar {
-  display: none;
+.sidebar.active {
+  left: 0;
 }
+.sidebar .sidebar-toggle {
+  position: absolute;
+  left: calc(100% + 1em);
+  top: 1em;
+  cursor: pointer;
+}
+
 @media only screen and (min-width: 600px) {
   .sidebar {
     display: block;
     width: var(--sidebar-width);
+    margin-top: -3em;
+    position: unset;
+    left: unset;
+    top: unset;
+    bottom: unset;
+    background-color: transparent;
+  }
+
+  .sidebar .sidebar-toggle {
+    display: none;
   }
 }
 @media only screen and (min-width: 1200px) {

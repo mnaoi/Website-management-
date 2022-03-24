@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useLocation } from "@reach/router"
 import { StaticImage } from "gatsby-plugin-image"
 import { Link } from 'gatsby'
@@ -23,6 +23,8 @@ const pagePrecedence = {
 }
 
 export default function Sidebar(props:Props) {
+  const [active, setActive] = useState(false)
+
   const location = useLocation()
 
   const pages: PageType[] = props.pages.map(p => p).sort((a: PageType, b: PageType) => {
@@ -42,7 +44,7 @@ export default function Sidebar(props:Props) {
 
   
   return (
-    <div className="sidebar">
+    <div className={`sidebar ${active?"active":""}`}>
       <StaticImage
         src="../../images/mnaoi.jpeg"
         alt="Profile picture"
@@ -54,6 +56,8 @@ export default function Sidebar(props:Props) {
           <p key={i} className={`item ${location.pathname==p.uri && "active"}`}><Link to={p.uri}>{p.title}</Link></p>
         )}
       </div>
+
+      <button className="sidebar-toggle" onClick={() => setActive(!active)}>X</button>
     </div>
   )
 }
