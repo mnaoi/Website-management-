@@ -44,20 +44,26 @@ export default function Sidebar(props:Props) {
 
   
   return (
-    <div className={`sidebar ${active?"active":""}`}>
-      <StaticImage
-        src="../../images/mnaoi.jpeg"
-        alt="Profile picture"
-      />
+    <>
+      <div className={`sidebar-dimmer ${active?"active":""}`} onClick={() => setActive(!active)}></div>
 
-      <hr/>
-      <div className='items'>
-        {pages.map((p,i) =>
-          <p key={i} className={`item ${location.pathname==p.uri && "active"}`}><Link to={p.uri}>{p.title}</Link></p>
-        )}
+      <div className={`sidebar ${active?"active":""}`}>
+
+        <StaticImage
+          src="../../images/mnaoi.jpeg"
+          alt="Profile picture"
+        />
+
+        <hr/>
+        <div className='items'>
+          {pages.map((p,i) =>
+            <p key={i} className={`item ${location.pathname==p.uri && "active"}`}><Link to={p.uri}>{p.title}</Link></p>
+          )}
+        </div>
+
+        <button className="sidebar-toggle" onClick={() => setActive(!active)}>X</button>
+        
       </div>
-
-      <button className="sidebar-toggle" onClick={() => setActive(!active)}>X</button>
-    </div>
+    </>
   )
 }

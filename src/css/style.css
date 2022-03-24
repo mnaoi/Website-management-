@@ -281,18 +281,33 @@ a:focus {
   }
 }
 
+
+.sidebar-dimmer {
+  display: none;
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.5);
+}
+.sidebar-dimmer.active {
+  display: block;
+}
+
 .sidebar {
   width: var(--sidebar-width);
   position: fixed;
   left: calc(-1 * var(--sidebar-width));
   top: 0;
   bottom: 0;
-  background-color: #ddd;
   transition: 0.5s;
+  background-color: white;
 }
 .sidebar.active {
   left: 0;
 }
+
 .sidebar .sidebar-toggle {
   position: absolute;
   left: calc(100% + 1em);
@@ -301,6 +316,10 @@ a:focus {
 }
 
 @media only screen and (min-width: 600px) {
+  .sidebar-dimmer.active {
+    display: none;
+  }
+
   .sidebar {
     display: block;
     width: var(--sidebar-width);
@@ -309,7 +328,6 @@ a:focus {
     left: unset;
     top: unset;
     bottom: unset;
-    background-color: transparent;
   }
 
   .sidebar .sidebar-toggle {
